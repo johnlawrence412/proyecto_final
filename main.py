@@ -47,6 +47,4 @@ def main(page: ft.Page):
 
 # Punto de entrada de Flet
 if __name__ == "__main__":
-    ft.app(target=main)
-
-view=ft.AppView.WEB_BROWSER
+    ft.app(target=main, view=ft.AppView.WEB_BROWSER)
