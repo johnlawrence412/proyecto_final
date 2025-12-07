@@ -3,15 +3,14 @@ from modelos import Libro
 
 def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
     
-
+    # --- 1. CONFIGURACIÓN DE UI (ENTRADAS) ---
     titulo_input = ft.TextField(label="Título", width=300, hint_text="Ej. El Principito", border_radius=10)
     autor_input = ft.TextField(label="Autor", width=300, hint_text="Ej. Antoine de Saint-Exupéry", border_radius=10)
     isbn_input = ft.TextField(label="ISBN", width=200, hint_text="Ej. 978-3-16-148410-0", border_radius=10)
 
-    # Mensaje para feedback (error o éxito)
     mensaje = ft.Text("", size=14, weight="bold")
 
-    # --- 2. TABLA DE DATOS CON ESTILO ---
+    # --- 2. TABLA DE DATOS ---
     tabla = ft.DataTable(
         columns=[
             ft.DataColumn(ft.Text("Título", weight="bold")),
@@ -20,42 +19,38 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
             ft.DataColumn(ft.Text("Estado", weight="bold")), 
         ],
         rows=[],
-        # CAMBIO: Usamos "grey" en lugar de ft.colors.OUTLINE para evitar errores
         border=ft.border.all(1, "grey"),
         border_radius=10,
         vertical_lines=ft.border.BorderSide(1, "grey"),
-        heading_row_color="grey200", # Color gris claro de fondo para encabezados
+        heading_row_color="grey200", 
         heading_row_height=60,
         data_row_min_height=50,
     )
 
     def refrescar_tabla():
-        """Recorre la lista global y reconstruye las filas de la tabla."""
         tabla.rows = [] 
         
         for libro in lista_libros:
-            
-            # CAMBIO: Usamos strings ("green", "red") para máxima compatibilidad
+            # CORRECCIÓN DE ICONOS: Usamos texto simple ("check", "close", etc)
             if libro.estado == "Disponible":
                 color_texto = "green"
-                icono = ft.icons.CHECK_CIRCLE_OUTLINE
-                bg_color = "green50" # Un verde muy clarito
+                nombre_icono = "check_circle_outline" # Nombre del icono en texto
+                bg_color = "green50" 
             else:
                 color_texto = "red"
-                icono = ft.icons.HIGHLIGHT_OFF
-                bg_color = "red50" # Un rojo muy clarito
+                nombre_icono = "highlight_off"      # Nombre del icono en texto
+                bg_color = "red50" 
 
-            # Creamos la fila
             fila = ft.DataRow(
                 cells=[
                     ft.DataCell(ft.Text(libro.titulo)),
                     ft.DataCell(ft.Text(libro.autor)),
                     ft.DataCell(ft.Text(libro.isbn)),
-                    # Celda de Estado Personalizada
+                    # Celda de Estado
                     ft.DataCell(
                         ft.Container(
                             content=ft.Row([
-                                ft.Icon(icono, color=color_texto, size=16),
+                                ft.Icon(name=nombre_icono, color=color_texto, size=16),
                                 ft.Text(libro.estado, color=color_texto, weight="bold")
                             ], spacing=5),
                             bgcolor=bg_color,
@@ -69,7 +64,7 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
         
         page.update()
 
-  
+    # --- 3. LÓGICA DE REGISTRO ---
     def registrar_libro(e):
         mensaje.value = ""
         
@@ -77,14 +72,12 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
         a = autor_input.value.strip()
         i = isbn_input.value.strip()
 
-        # Validación: ¿Faltan datos?
         if not t or not a or not i:
             mensaje.value = "⚠️ Error: Faltan datos obligatorios."
             mensaje.color = "red"
             page.update()
             return
 
-        # Validación: ¿ISBN ya existe?
         for libro in lista_libros:
             if libro.isbn == i:
                 mensaje.value = f"⛔ Error: El ISBN '{i}' ya está registrado."
@@ -92,13 +85,8 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
                 page.update()
                 return
 
-        # Crear Libro
         nuevo_libro = Libro(titulo=t, autor=a, isbn=i)
-
-        # Agregar a la lista compartida
         lista_libros.append(nuevo_libro)
-
-        # Actualizar tabla y limpiar formulario
         refrescar_tabla()
         
         titulo_input.value = ""
@@ -109,21 +97,20 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
         mensaje.color = "green"
         page.update()
 
-    # Botón con estilo
+    # Botón con corrección de icono ("add")
     boton_registrar = ft.ElevatedButton(
         text="Registrar Libro",
-        icon=ft.icons.ADD,
-        bgcolor="blue", # Color azul estándar
+        icon="add",  # <--- AQUÍ ESTABA EL ERROR, ahora es texto "add"
+        bgcolor="blue", 
         color="white",
         on_click=registrar_libro,
         height=50,
         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10))
     )
 
-
+    # --- 4. DISEÑO ---
     vista = ft.Column(
         controls=[
-            # Sección de Formulario
             ft.Container(
                 content=ft.Column([
                     ft.Text("Gestión de Inventario", size=24, weight="bold", color="blue"),
@@ -135,14 +122,13 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
                     ft.Row([boton_registrar, mensaje], alignment=ft.MainAxisAlignment.START, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                 ]),
                 padding=25,
-                bgcolor="blue50", # Fondo azul muy suave
+                bgcolor="blue50", 
                 border_radius=15,
                 border=ft.border.all(1, "blue100")
             ),
             
             ft.Divider(height=30, thickness=1),
             
-            # Sección de Tabla
             ft.Text("Inventario Actual", size=20, weight="bold"),
             ft.Container(
                 content=tabla, 
@@ -155,7 +141,6 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
         spacing=20
     )
 
-    # Carga inicial
     refrescar_tabla()
 
     return vista
