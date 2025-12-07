@@ -3,7 +3,7 @@ from modelos import Libro
 
 def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
     
-    # --- 1. CONFIGURACIÓN DE UI (ENTRADAS) ---
+
     titulo_input = ft.TextField(label="Título", width=300, hint_text="Ej. El Principito", border_radius=10)
     autor_input = ft.TextField(label="Autor", width=300, hint_text="Ej. Antoine de Saint-Exupéry", border_radius=10)
     isbn_input = ft.TextField(label="ISBN", width=200, hint_text="Ej. 978-3-16-148410-0", border_radius=10)
@@ -34,7 +34,7 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
         tabla.rows = [] 
         
         for libro in lista_libros:
-            # --- LOGICA VISUAL DE ESTADO ---
+            
             # CAMBIO: Usamos strings ("green", "red") para máxima compatibilidad
             if libro.estado == "Disponible":
                 color_texto = "green"
@@ -69,7 +69,7 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
         
         page.update()
 
-    # --- 3. LÓGICA DE REGISTRO ---
+  
     def registrar_libro(e):
         mensaje.value = ""
         
@@ -120,7 +120,7 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10))
     )
 
-    # --- 4. DISEÑO DE LA VISTA (LAYOUT) ---
+
     vista = ft.Column(
         controls=[
             # Sección de Formulario
