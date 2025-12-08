@@ -52,12 +52,16 @@ def crear_vista_prestamos(page: ft.Page, lista_libros: list[Libro], lista_client
                         cliente_text = f"{encontrado.nombre} {encontrado.apellido} ({encontrado.cedula})"
                     else:
                         cliente_text = str(cl)
+
+            # Color según el estado
+            color_estado = "green" if libro.estado == "Disponible" else "red"
+
             fila = ft.DataRow(
                 cells=[
                     ft.DataCell(ft.Text(libro.titulo)),
                     ft.DataCell(ft.Text(libro.autor)),
                     ft.DataCell(ft.Text(libro.isbn)),
-                    ft.DataCell(ft.Text(libro.estado, weight="bold")),
+                    ft.DataCell(ft.Text(libro.estado, weight="bold", color=color_estado)),
                     ft.DataCell(ft.Text(cliente_text)),
                 ]
             )
