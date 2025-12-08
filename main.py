@@ -25,16 +25,18 @@ def main(page: ft.Page):
     ]
 
     #  Vistas y Pestañas
+    vista_libros = crear_vista_libros(page, lista_libros)
+    vista_clientes = crear_vista_clientes(page, lista_clientes)
     vista_prestamos = crear_vista_prestamos(page, lista_libros, lista_clientes)
 
     tab_libros = ft.Tab(
         text="Libros",
-        content=crear_vista_libros(page, lista_libros),
+        content=vista_libros,
     )
 
     tab_clientes = ft.Tab(
         text="Clientes",
-        content=crear_vista_clientes(page, lista_clientes),
+        content=vista_clientes,
     )
 
     tab_prestamos = ft.Tab(
@@ -43,9 +45,21 @@ def main(page: ft.Page):
     )
 
     def on_tab_change(e):
-        # Cuando se cambia a la pestaña de préstamos (índice 2), refrescar la vista
-        if e.control.selected_index == 2:
-            # Llamar al evento on_visible manualmente
+        # Refrescar la vista según la pestaña seleccionada
+        selected_index = e.control.selected_index
+
+        # Índice 0: Libros
+        if selected_index == 0:
+            if hasattr(vista_libros, 'on_visible') and vista_libros.on_visible:
+                vista_libros.on_visible(None)
+
+        # Índice 1: Clientes
+        elif selected_index == 1:
+            if hasattr(vista_clientes, 'on_visible') and vista_clientes.on_visible:
+                vista_clientes.on_visible(None)
+
+        # Índice 2: Préstamos
+        elif selected_index == 2:
             if hasattr(vista_prestamos, 'on_visible') and vista_prestamos.on_visible:
                 vista_prestamos.on_visible(None)
 
