@@ -14,12 +14,19 @@ def main(page: ft.Page):
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.scroll = "AUTO"
 
-    #  Estado global 
+    #  Estado global
     # Estas listas se compartiran con todos los modulos
     lista_libros: list[Libro] = []
-    lista_clientes: list[Cliente] = []
+    lista_clientes: list[Cliente] = [
+        Cliente("Juan", "Pérez", "8-978-3456"),
+        Cliente("María", "González", "8-765-4321"),
+        Cliente("Carlos", "Rodríguez", "1-122-3344"),
+        Cliente("Ana", "Martínez", "5-566-7788"),
+    ]
 
     #  Vistas y Pestañas
+    vista_prestamos = crear_vista_prestamos(page, lista_libros, lista_clientes)
+
     tab_libros = ft.Tab(
         text="Libros",
         content=crear_vista_libros(page, lista_libros),
@@ -32,13 +39,21 @@ def main(page: ft.Page):
 
     tab_prestamos = ft.Tab(
         text="Prestamos",
-        content=crear_vista_prestamos(page, lista_libros, lista_clientes),
+        content=vista_prestamos,
     )
+
+    def on_tab_change(e):
+        # Cuando se cambia a la pestaña de préstamos (índice 2), refrescar la vista
+        if e.control.selected_index == 2:
+            # Llamar al evento on_visible manualmente
+            if hasattr(vista_prestamos, 'on_visible') and vista_prestamos.on_visible:
+                vista_prestamos.on_visible(None)
 
     tabs = ft.Tabs(
         selected_index=0,
         expand=True,
         tabs=[tab_libros, tab_clientes, tab_prestamos],
+        on_change=on_tab_change,
     )
 
     # Agregar todo a la pagina
