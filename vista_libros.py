@@ -28,18 +28,18 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
     )
 
     def refrescar_tabla():
-        tabla.rows = [] 
-        
+        tabla.rows = []
+
         for libro in lista_libros:
             # CORRECCIÓN DE ICONOS: Usamos texto simple ("check", "close", etc)
             if libro.estado == "Disponible":
                 color_texto = "green"
                 nombre_icono = "check_circle_outline" # Nombre del icono en texto
-                bg_color = "green50" 
+                bg_color = "green50"
             else:
                 color_texto = "red"
                 nombre_icono = "highlight_off"      # Nombre del icono en texto
-                bg_color = "red50" 
+                bg_color = "red50"
 
             fila = ft.DataRow(
                 cells=[
@@ -61,8 +61,6 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
                 ]
             )
             tabla.rows.append(fila)
-        
-        page.update()
 
     # --- 3. LÓGICA DE REGISTRO ---
     def registrar_libro(e):
@@ -141,6 +139,15 @@ def crear_vista_libros(page: ft.Page, lista_libros: list[Libro]):
         spacing=20
     )
 
-    refrescar_tabla()
+    # Función para refrescar la vista completa
+    def refrescar_vista():
+        refrescar_tabla()
+        page.update()
+
+    # Inicializar tabla
+    refrescar_vista()
+
+    # Exponer función de refresco para llamar cuando se cambie de pestaña
+    vista.on_visible = lambda _: refrescar_vista()
 
     return vista
