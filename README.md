@@ -164,10 +164,10 @@ proyecto_final/
 
 ## Autores
 Proyecto Final - Programación 3
-Demetrio Garcia
-John Roa
-Yoel Amat
-Jonathan Vergara
+- Demetrio Garcia
+- John Roa
+- Yoel Amat
+- Jonathan Vergara
 
 ## Licencia
 
